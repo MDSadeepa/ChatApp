@@ -3,35 +3,31 @@ import {View} from "react-native";
 interface Circle {
     width: number;
     height: number;
-    fillColor: string;
     borderRadius: number;
+    fillColor?: string;
+    className?: string;
     topValue?: number;
     leftValue?: number;
     rightValue?: number;
     bottomValue?: number;
 }
 
-export default function CircleShape({
-                                        width,
-                                        height,
-                                        fillColor,
-                                        borderRadius,
-                                        topValue,
-                                        leftValue,
-                                        rightValue,
-                                        bottomValue
-                                    }: Circle) {
+export default function CircleShape(c: Circle) {
     return (
-        <View style={{
-            width: width,
-            height: height,
-            backgroundColor: fillColor,
-            borderRadius: borderRadius,
-            position: "absolute",
-            ...(topValue !== undefined && {top: topValue}),
-            ...(leftValue !== undefined && {left: leftValue}),
-            ...(rightValue !== undefined && {right: rightValue}),
-            ...(bottomValue !== undefined && {bottom: bottomValue})
-        }}></View>
+        <View
+            className={`${c.className ?? ""}`}
+            style={{
+                width: c.width,
+                height: c.height,
+                backgroundColor: c.fillColor,
+                borderRadius: c.borderRadius,
+                position: "absolute",
+                ...(c.fillColor !== undefined && {backgroundColor: c.fillColor}),
+                ...(c.topValue !== undefined && {top: c.topValue}),
+                ...(c.leftValue !== undefined && {left: c.leftValue}),
+                ...(c.rightValue !== undefined && {right: c.rightValue}),
+                ...(c.bottomValue !== undefined && {bottom: c.bottomValue}),
+                zIndex: 0,
+            }}></View>
     );
 }
