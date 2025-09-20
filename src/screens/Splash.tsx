@@ -1,26 +1,44 @@
-import {StatusBar, Image, StyleSheet, View, Text} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {StatusBar, Image, Text} from "react-native";
+import {SafeAreaView} from "react-native-safe-area-context";
 import "../../global.css"
 import CircleShape from "../components/CircleShape";
 import {useEffect} from "react";
 import Animated, {useAnimatedStyle, useSharedValue, withTiming} from "react-native-reanimated";
+import {useNavigation} from "@react-navigation/native";
+import {NativeStackNavigationProp} from "@react-navigation/native-stack";
+import {RootStackParamList} from "../../App";
+import {useTheme} from "../theme/ThemeProvider";
+
+type Props = NativeStackNavigationProp<RootStackParamList, "Splash">;
 
 export default function Splash() {
-   const opacity = useSharedValue(0);
+    const navigation = useNavigation<Props>();
+    const opacity = useSharedValue(0);
 
-   useEffect(() => {
-       opacity.value = withTiming(1, {duration: 3000});
-   },[])
+    useEffect(() => {
+        opacity.value = withTiming(1, {duration: 3000});
+        const timeout = setTimeout(() => {
+            navigation.navigate("SignUp");
+            clearTimeout(timeout);
+        }, 3000)
+
+        return () => {
+            clearTimeout(timeout);
+        }
+    }, [navigation, opacity]);
 
     const animatedStyle = useAnimatedStyle(() => {
         return {
             opacity: opacity.value
-        }
+        };
     })
 
-    return(
-        <SafeAreaView className="flex-1 justify-center items-center">
-            <StatusBar hidden={true} />
+    const applied = useTheme();
+    const logo = applied.applied === "dark" ? require("../../assets/logo-dark.png") : require("../../assets/logo.jpeg");
+
+    return (
+        <SafeAreaView className="flex-1 justify-center items-center bg-slate-50 dark:bg-slate-900">
+            <StatusBar hidden={true}/>
             <CircleShape
                 width={250}
                 height={250}
@@ -39,10 +57,11 @@ export default function Splash() {
             />
 
             <Animated.View style={[animatedStyle]}>
-                <Image source={require("../../assets/logo.jpeg")} style={{ height: 180, width: 220 }} />
+                <Image source={logo} style={{height: 180, width: 220}}/>
             </Animated.View>
 
-            <Animated.View className="absolute bottom-0 mb-10 flex flex-col justify-center items-center" style={animatedStyle}>
+            <Animated.View className="absolute bottom-0 mb-10 flex flex-col justify-center items-center"
+                           style={animatedStyle}>
                 <Text className="text-xs fornt-bold text-slate-600">
                     POWERED BY: {process.env.EXPO_PUBLIC_APP_OWNER}
                 </Text>
@@ -51,31 +70,5 @@ export default function Splash() {
                 </Text>
             </Animated.View>
         </SafeAreaView>
-    )
+    );
 }
-// const styles = StyleSheet.create({
-//     companyName:{
-//         color:"#475569",
-//         fontWeight:"bold",
-//         fontSize:12
-//     },
-//     appVersion:{
-//         color:"#475569",
-//         fontWeight:"bold",
-//         fontSize:10
-//     },
-//     bottomContainer: {
-//         position: "absolute",
-//         bottom: 70,
-//         display: "flex",
-//         flexDirection: "column",
-//         justifyContent: "center",
-//         alignItems: "center"
-//     },
-//     container:{
-//         backgroundColor:"#F9FAFB",
-//         flex:1,
-//         justifyContent:"center",
-//         alignItems:"center"
-//     }
-// });
